@@ -50,7 +50,7 @@ const getHtmlByUrl = async (url) => {
         content = await page.evaluate(() => {
 
             const MAX_GROUP = 12;
-            const MAX_ITEM_IN_GROUP = 12;
+            const MAX_ITEM_IN_GROUP = 27;
 
             let [,,,...rest] = [...document.querySelectorAll(".cc-cd")];
             
