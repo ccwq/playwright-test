@@ -7,6 +7,7 @@ import Koa from 'koa';
 import Router from '@koa/router';
 import axios from 'axios';
 import URL from 'url'
+import { console } from "inspector";
 
 const app = new Koa();
 const router = new Router();
@@ -19,9 +20,9 @@ let page = null;
 const getHtmlByUrl = async (url) => {
     if(!browser){
         // 启动浏览器
-        browser = await chromium.launch();
-
-
+        browser = await chromium.launch({
+            // headless: false,
+        });
         page = await browser.newPage();
         // setPageSize
         await page.setViewportSize({ width: 1440, height: 5120 });
@@ -37,18 +38,40 @@ const getHtmlByUrl = async (url) => {
 
     if(url.includes('tophub.today')){
         await page.waitForFunction(() => {
-            const [,,,...rest] = [...document.querySelectorAll(".cc-cd")]; 
-            //rest.length=12; 
-            //const textList = rest.map(el=>Array.from(el.querySelectorAll("a"))).flat().map(a=>a.innerText)
 
-            return rest.length>12
+            console.log("wait---");
+
+            const [,,,...rest] = [...document.querySelectorAll(".cc-cd")]; 
+
+            console.log(rest.length, "length");
+            return rest.length>=9
         }, { timeout: 8000 });
 
         content = await page.evaluate(() => {
-            const [,,,...rest] = [...document.querySelectorAll(".cc-cd")];
-            rest.length=12; 
-            const textList = rest.map(el=>Array.from(el.querySelectorAll("a"))).flat().map(a=>a.innerText)
-            return textList.join("\n")
+
+            const MAX_GROUP = 12;
+            const MAX_ITEM_IN_GROUP = 12;
+
+            let [,,,...rest] = [...document.querySelectorAll(".cc-cd")];
+            
+            rest.length = Math.min(rest.length, MAX_GROUP);
+            
+            // 读取连接
+            rest = rest.map(el=>Array.from(el.querySelectorAll("a")))
+            
+            // 每组最多取10条
+            rest = rest.map(el=>el.slice(0, MAX_ITEM_IN_GROUP))
+
+            // 数组扁平化
+            rest = rest.flat()
+
+            // 获取文本
+            rest = rest.map(el=>el.innerText)
+
+            rest = rest.map(el=>el.split(/\s/).join(" "))
+
+            // 拼合
+            return rest.join("\n")
         });
     }else{
         // await page.waitForFunction(() => {

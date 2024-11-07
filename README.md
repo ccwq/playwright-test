@@ -31,9 +31,9 @@
    - `<是否简单模式>`：可选参数，默认为`false`。如果设置为`true`，则返回简单文本内容，否则返回包含详细信息的JSON对象。
 
 ## 示例
-假设你想要抓取`https://tophub.today/`的内容，并希望返回简单文本内容，你可以访问以下URL：
+假设你想要抓取`https://tophub.today/c/news`的内容，并希望返回简单文本内容，你可以访问以下URL：
 ```
-http://localhost:3100/content?url=https://tophub.today/&simple=true
+http://localhost:3100/content?url=https://tophub.today/c/news&simple=true
 ```
 
 # 输入结构
